@@ -1,0 +1,163 @@
+import { ListView, LineEdit } from "std-widgets.slint";
+
+export struct PersonData {
+    card-number: string,
+    card-date: string,
+    name: string,
+    rank: string,
+    unit: string,
+}
+
+export component MainWindow inherits Window {
+    width: 1100px;
+    height: 600px;
+
+    in property <[PersonData]> rows;
+
+
+    in-out property<string> filter-name;
+    in-out property<string> filter-rank;
+    in-out property<string> filter-unit;
+
+    callback update-cell(int, int, string);
+    callback filter-changed(string, string, string);
+
+    VerticalLayout {
+
+        // HEADER
+        Rectangle {
+            height: 30px;
+            background: #444;
+
+            HorizontalLayout {
+                Text { text: "Card Number"; width: 100px; color: white; }
+                Text { text: "Card Date"; width: 200px; color: white; }
+                Text { text: "Name"; width: 300px; color: white; }
+                Text { text: "Rank"; width: 200px; color: white; }
+                Text { text: "Unit"; width: 100px; color: white; }
+                
+            }
+        }
+
+        // FILTER ROW (IMPORTANT PART)
+        Rectangle {
+            height: 30px;
+
+            HorizontalLayout {
+
+                LineEdit {
+                    width: 100px;
+                    text: "";
+
+                    edited(t) => {
+                    }
+                }
+                LineEdit {
+                    width: 200px;
+                    text: "";
+
+                    edited(t) => {
+                    }
+                }
+                LineEdit {
+                    width: 300px;
+                    text: root.filter-name;
+
+                    edited(t) => {
+                        root.filter-name = t;
+                        root.filter-changed(root.filter-name, root.filter-rank, root.filter-unit);
+                    }
+                }
+
+                LineEdit {
+                    width: 200px;
+                    text: root.filter-rank;
+
+                    edited(t) => {
+                        root.filter-rank = t;
+                        root.filter-changed(root.filter-name, root.filter-rank, root.filter-unit);
+                    }
+                }
+
+                LineEdit {
+                    width: 100px;
+                    text: root.filter-unit;
+
+                    edited(t) => {
+                        root.filter-unit = t;
+                        root.filter-changed(root.filter-name, root.filter-rank, root.filter-unit);
+                    }
+                }
+            }
+        }
+
+        // TABLE
+        ListView {
+            for row[i] in root.rows : Rectangle {
+                height: 28px;
+                border-width: 2px;
+                //border-color: #47c91f;
+                // use a boolean property to control background color
+                // in-out property<bool> selected: false;
+                // border-color: selected ? #ffdd57 : #d727b4;
+
+                // area := TouchArea {
+                //     width: parent.width;
+                //     height: parent.height;
+                //     clicked => {
+                //         // toggle selection/background on click
+                //         parent.selected = !parent.selected;
+                //     }
+                // }
+    
+
+                HorizontalLayout {
+                    spacing: 5px;
+
+                     LineEdit {
+                        width: 100px;
+                        text: row.card-number;
+
+                        edited(t) => {
+                         //   root.update-cell(i, 0, t);
+                        }
+                    }
+                     LineEdit {
+                        width: 200px;
+                        text: row.card-date;
+
+                        edited(t) => {
+                        //    root.update-cell(i, 0, t);
+                        }
+                    }
+                    LineEdit {
+                        width: 300px;
+                        text: row.name;
+
+                        edited(t) => {
+                            root.update-cell(i, 0, t);
+                        }
+                    }
+
+                    LineEdit {
+                        width: 200px;
+                        text: row.rank;
+
+                        edited(t) => {
+                            root.update-cell(i, 1, t);
+                        }
+                    }
+
+                    LineEdit {
+                        width: 100px;
+                        text: row.unit;
+
+                        edited(t) => {
+                            root.update-cell(i, 2, t);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
